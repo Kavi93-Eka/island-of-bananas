@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Treasure Hunt: Island of Bananas 🍌</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<!-- ================= LOGIN SCREEN ================= -->
+<section id="login-screen" class="screen active-screen">
+    <div class="card fade-in">
+        <h1>Treasure Hunt: Island of Bananas 🍌</h1>
+        <p class="tagline">Log in to begin your tropical adventure!</p>
+
+        <form id="login-form">
+            <label for="email">Email 🌐</label>
+            <input type="email" id="email" required placeholder="explorer@example.com">
+
+            <label for="password">Password 🔑</label>
+            <input type="password" id="password" required placeholder="Enter a secret word">
+
+            <button type="submit" id="login-btn">Start Adventure 🚀</button>
+        </form>
+
+        <p class="small-note">
+            This login is for <strong>virtual identity</strong> only – it’s stored in your browser (localStorage),
+            not on a server.
+        </p>
+    </div>
+</section>
+
+<!-- ================= GAME SCREEN ================= -->
+<section id="game-screen" class="screen hidden">
+    <header class="game-header">
+        <div>
+            <h2>Welcome, <span id="player-email-display"></span> 🧭</h2>
+            <p>Explore the island, solve puzzles, and find the Golden Banana Treasure! ✨</p>
+        </div>
+
+        <div class="controls">
+            <button id="hint-btn">Need a Hint? 💡</button>
+            <button id="sound-toggle">🔊 Sound: On</button>
+            <button id="logout-btn">Log out 🚪</button>
+        </div>
+    </header>
+
+    <main class="layout">
+        <!-- MAP AREA -->
+        <section class="panel map-panel">
+            <h3>Island Map 🗺️</h3>
+            <p>Select a location to explore:</p>
+            <div id="location-buttons" class="location-buttons">
+                <button data-location="beach">🏖️ Sunny Beach</button>
+                <button data-location="jungle">🌴 Mystic Jungle</button>
+                <button data-location="volcano">🌋 Banana Volcano</button>
+                <button data-location="village">🏝️ Banana Village</button>
+            </div>
+
+            <div id="location-info">
+                <h3 id="location-title"></h3>
+                <p id="location-description"></p>
+            </div>
+        </section>
+
+        <!-- PUZZLE AREA -->
+        <section class="panel puzzle-panel">
+            <h3>Puzzle Zone 🧩</h3>
+
+            <div class="puzzle-image-wrap">
+                <img id="puzzle-image" alt="Puzzle image" />
+            </div>
+
+            <p id="puzzle-question"></p>
+
+            <div class="answer-row">
+                <input id="answer-input" type="text" placeholder="Type your answer here...">
+                <button id="submit-answer-btn">Submit ✅</button>
+            </div>
+
+            <p id="hint-text" class="hint-text"></p>
+            <p id="message" class="message"></p>
+        </section>
+
+        <!-- PROGRESS / INVENTORY -->
+        <section class="panel progress-panel">
+            <h3>Progress & Inventory 🎒</h3>
+
+            <h4>Locations solved:</h4>
+            <ul id="progress-list"></ul>
+
+            <h4>Items collected:</h4>
+            <ul id="inventory-list"></ul>
+        </section>
+    </main>
+</section>
+
+<!-- ================== AUDIO ================== -->
+<audio id="bg-music" loop src="assets/sounds/bg-music.mp3"></audio>
+<audio id="click-sound" src="assets/sounds/click.mp3"></audio>
+<audio id="success-sound" src="assets/sounds/success.mp3"></audio>
+<audio id="fail-sound" src="assets/sounds/fail.mp3"></audio>
+
+<script src="game.js"></script>
+</body>
+</html>
