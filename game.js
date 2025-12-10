@@ -46,9 +46,9 @@ const locations = {
         description: "You arrive at a golden beach. Waves whisper secrets about a hidden map in the sand.",
         image: "assets/images/beach.jpg",
         type: "local",
-        question: "You see 5 coconuts and 3 bananas drawn in the sand. How many fruits in total?",
-        solution: "8",
-        hint: "Add coconuts and bananas together. ➕",
+        question: "A sequence is carved in the sand: 4, 9, 16, 25, ?. What is the next number?",
+        solution: "36",
+        hint: "Think of square numbers: 2², 3², 4², 5², ...",
         reward: "Shell of Clues 🐚"
     },
     jungle: {
@@ -56,9 +56,9 @@ const locations = {
         description: "The jungle is dense and echoing. You spot stones arranged in a pattern.",
         image: "assets/images/jungle.jpg",
         type: "local",
-        question: "Stones are laid like: 1, 1, 2, 3, 5, ?. What is the next number?",
-        solution: "8",
-        hint: "It's Fibonacci. Add the last two numbers.",
+        question: "A map is 80% complete. If 12 fragments are already found, how many make the full map?",
+        solution: "15",
+        hint: "12 is 80% of the total. Divide 12 by 0.8.",
         reward: "Leaf of Wisdom 🍃"
     },
     volcano: {
@@ -116,6 +116,22 @@ function loadIdentity() {
 function clearIdentity() {
     localStorage.removeItem("islandPlayerEmail");
 }
+
+// ---- SIMPLE USER DATABASE (localStorage) ----
+function loadUsers() {
+    const raw = localStorage.getItem("islandUsers");
+    if (!raw) return [];
+    try {
+        return JSON.parse(raw);
+    } catch {
+        return [];
+    }
+}
+
+function saveUsers(users) {
+    localStorage.setItem("islandUsers", JSON.stringify(users));
+}
+
 
 // RENDER HELPERS
 function renderProgress() {
@@ -197,6 +213,7 @@ function checkAnswer() {
     if (!loc) return;
 
     const userAnswerRaw = answerInput.value.trim();
+
     if (!userAnswerRaw) {
         showMessage("Please enter an answer first! 🙈", "error");
         answerInput.classList.add("shake");

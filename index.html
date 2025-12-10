@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Treasure Hunt: Island of Bananas 🍌</title>
+    <title>Treasure Hunt: Island of Bananass 🍌</title>
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -21,8 +21,14 @@
             <label for="password">Password 🔑</label>
             <input type="password" id="password" required placeholder="Enter a secret word">
 
+            <label for="auth-mode">I want to:</label>
+            <select id="auth-mode">
+                <option value="login">Log in (I already have an account)</option>
+                <option value="signup">Sign up (I’m new here)</option>
+            </select>
+
             <button type="submit" id="login-btn">Start Adventure 🚀</button>
-        </form>
+        </form> 
 
         <p class="small-note">
             This login is for <strong>virtual identity</strong> only – it’s stored in your browser (localStorage),
@@ -81,6 +87,7 @@
 
             <p id="hint-text" class="hint-text"></p>
             <p id="message" class="message"></p>
+
         </section>
 
         <!-- PROGRESS / INVENTORY -->
