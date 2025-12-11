@@ -233,19 +233,19 @@ function renderInventory() {
 }
 
 function highlightActiveLocationButton() {
-    const buttons = locationButtonsContainer.querySelectorAll("button[data-location]");
-    buttons.forEach(btn => {
-        const key = btn.dataset.location;
-        const isActive = key === gameState.currentLocationKey;
-        const isUnlocked = gameState.unlockedLocations.has(key);
-
-        btn.classList.toggle("active-location", isActive);
-        btn.classList.toggle("locked-location", !isUnlocked);
+  const cards = document.querySelectorAll("#location-cards .location-card");
+  cards.forEach(card => {
+    if (card.dataset.location === gameState.currentLocationKey) {
+      card.classList.add("active-location");
+    } else {
+      card.classList.remove("active-location");
+    }
+  });
+}
 
         // lock the button if not unlocked yet
         btn.disabled = !isUnlocked;
-    });
-}
+
 
 // LOCATION & PUZZLE
 async function loadLocation(locationKey) {
@@ -271,6 +271,8 @@ async function loadLocation(locationKey) {
         puzzleQuestion.textContent = loc.question + " (From Banana API)";
         await loadBananaPuzzle();
     }
+
+    highlightActiveLocationButton();
 }
 
 // INTEROPERABILITY: Banana API
@@ -339,6 +341,11 @@ function handleCorrectAnswer(locKey) {
         const nextKey = locationOrder[idx + 1];
         if (nextKey) {
             gameState.unlockedLocations.add(nextKey);
+
+            if (typeof window.refreshCardLocks === "function") window.refreshCardLocks();
+
+            highlightActiveLocationButton();
+
             showMessage(
                 `Correct! 🎉 You earned: ${loc.reward}. New area unlocked: ${locations[nextKey].name}!`,
                 "success"
@@ -450,23 +457,47 @@ logoutBtn.addEventListener("click", () => {
     showMessage("");
 });
 
-// OTHER EVENTS
-locationButtonsContainer.addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-location]");
-    if (!button) return;
+// NEW: card-based locations
+const locationCardsContainer = document.getElementById("location-cards");
 
-    const locationKey = button.dataset.location;
+if (locationCardsContainer) {
+  // initialize lock states visually
+  function refreshCardLocks() {
+    const cards = locationCardsContainer.querySelectorAll(".location-card");
+    cards.forEach(card => {
+      const key = card.dataset.location;
+      if (gameState.unlockedLocations && gameState.unlockedLocations.has(key)) {
+        card.classList.remove("locked");
+        const lock = card.querySelector(".lock-icon");
+        if (lock) lock.classList.add("hidden");
+      } else {
+        card.classList.add("locked");
+        const lock = card.querySelector(".lock-icon");
+        if (lock) lock.classList.remove("hidden");
+      }
+    });
+  }
 
-    // if locked, don't let them enter
-    if (!gameState.unlockedLocations.has(locationKey)) {
-        showMessage("This area is locked. Solve your current riddle first to unlock it. 🔒", "error");
-        playSound(failSound);
-        return;
+  // click to enter a location (only if unlocked)
+  locationCardsContainer.addEventListener("click", (event) => {
+    const card = event.target.closest(".location-card");
+    if (!card) return;
+    const locationKey = card.dataset.location;
+    if (!gameState.unlockedLocations || !gameState.unlockedLocations.has(locationKey)) {
+      // play locked sound/feedback
+      showMessage("This area is locked. Solve the current riddle to unlock it.", "error");
+      playSound(failSound);
+      return;
     }
-
     playSound(clickSound);
     loadLocation(locationKey);
-});
+  });
+
+  // call refresh at load
+  refreshCardLocks();
+  // expose to global so other code can call it when unlocked
+  window.refreshCardLocks = refreshCardLocks;
+}
 
 hintBtn.addEventListener("click", showHint);
 

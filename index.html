@@ -86,15 +86,42 @@
             <h3>Island Map 🗺️</h3>
             <p>Select a location to explore:</p>
 
-<div id="location-buttons" class="visual-map">
+<div id="location-cards" class="location-cards">
+  <article class="location-card" data-location="beach">
+    <img src="assets/images/beach-card.jpg" alt="Sunny Beach">
+    <div class="card-overlay">
+      <h4>Sunny Beach</h4>
+      <p>Golden sands meet crystal-clear waters. Palm trees sway gently in the breeze.</p>
+      <span class="lock-icon hidden">🔒</span>
+    </div>
+  </article>
 
-    <img src="assets/images/island-map.png" class="island-map-img">
+  <article class="location-card locked" data-location="jungle">
+    <img src="assets/images/jungle-card.jpg" alt="Mystic Jungle">
+    <div class="card-overlay">
+      <h4>Mystic Jungle</h4>
+      <p>Dense tropical vegetation hides ancient secrets.</p>
+      <span class="lock-icon">🔒</span>
+    </div>
+  </article>
 
-    <button class="map-point beach" data-location="beach">🏖️</button>
-    <button class="map-point jungle" data-location="jungle">🌴</button>
-    <button class="map-point volcano" data-location="volcano">🌋</button>
-    <button class="map-point village" data-location="village">🏘️</button>
+  <article class="location-card locked" data-location="volcano">
+    <img src="assets/images/volcano-card.jpg" alt="Banana Volcano">
+    <div class="card-overlay">
+      <h4>Banana Volcano</h4>
+      <p>Lava glows like molten bananas! Solve the Banana API puzzle here.</p>
+      <span class="lock-icon">🔒</span>
+    </div>
+  </article>
 
+  <article class="location-card locked" data-location="village">
+    <img src="assets/images/village-card.jpg" alt="Banana Village">
+    <div class="card-overlay">
+      <h4>Banana Village</h4>
+      <p>The village elder challenges you with a final riddle.</p>
+      <span class="lock-icon">🔒</span>
+    </div>
+  </article>
 </div>
             <div id="location-info">
                 <h3 id="location-title"></h3>
