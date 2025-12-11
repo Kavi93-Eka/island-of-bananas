@@ -132,7 +132,6 @@ function saveUsers(users) {
     localStorage.setItem("islandUsers", JSON.stringify(users));
 }
 
-
 // RENDER HELPERS
 function renderProgress() {
     progressList.innerHTML = "";
@@ -288,8 +287,10 @@ function showHint() {
 // LOGIN / LOGOUT
 loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
+
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
+    const mode = authModeSelect.value; // "login" or "signup"
 
     if (!email || !password) {
         showMessage("Email and password are required to start your adventure. 🕵️", "error");
