@@ -39,6 +39,7 @@ const clickSound = document.getElementById("click-sound");
 const successSound = document.getElementById("success-sound");
 const failSound = document.getElementById("fail-sound");
 
+
 // GAME STATE
 const locations = {
     beach: {
@@ -46,9 +47,9 @@ const locations = {
         description: "You arrive at a golden beach. Waves whisper secrets about a hidden map in the sand.",
         image: "assets/images/beach.jpg",
         type: "local",
-        question: "You see 5 coconuts and 3 bananas drawn in the sand. How many fruits in total?",
-        solution: "8",
-        hint: "Add coconuts and bananas together. ➕",
+        question: "A sequence is carved in the sand: 4, 9, 16, 25, ?. What is the next number?",
+        solution: "36",
+        hint: "Think of square numbers: 2², 3², 4², 5², ...",
         reward: "Shell of Clues 🐚"
     },
     jungle: {
@@ -56,9 +57,9 @@ const locations = {
         description: "The jungle is dense and echoing. You spot stones arranged in a pattern.",
         image: "assets/images/jungle.jpg",
         type: "local",
-        question: "Stones are laid like: 1, 1, 2, 3, 5, ?. What is the next number?",
-        solution: "8",
-        hint: "It's Fibonacci. Add the last two numbers.",
+        question: "A map is 80% complete. If 12 fragments are already found, how many make the full map?",
+        solution: "15",
+        hint: "12 is 80% of the total. Divide 12 by 0.8.",
         reward: "Leaf of Wisdom 🍃"
     },
     volcano: {
@@ -82,9 +83,12 @@ const locations = {
     }
 };
 
+const locationOrder = ["beach", "jungle", "volcano", "village"];
+
 const gameState = {
     currentLocationKey: "beach",
     solvedLocations: new Set(),
+    unlockedLocations: new Set(["beach"]), // only beach at start
     inventory: [],
     bananaSolution: null,
     soundOn: true
@@ -117,6 +121,98 @@ function clearIdentity() {
     localStorage.removeItem("islandPlayerEmail");
 }
 
+// ---- SIMPLE USER DATABASE (localStorage) ----
+// stored as: [{ email, password }, ...]
+function loadUsers() {
+    const raw = localStorage.getItem("islandUsers");
+    if (!raw) return [];
+    try {
+        return JSON.parse(raw);
+    } catch {
+        return [];
+    }
+}
+function saveUsers(users) {
+    localStorage.setItem("islandUsers", JSON.stringify(users));
+}
+
+// ---- AUTH MODE TOGGLE (login / signup) ----
+let authMode = "login"; // "login" or "signup"
+
+// these elements are defined in index.html
+const authToggleBtn = document.getElementById("auth-toggle");
+const authToggleText = document.getElementById("auth-toggle-text");
+const loginBtn = document.getElementById("login-btn");
+
+function setAuthMode(mode) {
+    authMode = mode;
+
+    // if elements are missing, do nothing
+    if (!authToggleBtn || !authToggleText || !loginBtn) return;
+
+    if (mode === "login") {
+        authToggleText.textContent = "Don’t have an account?";
+        authToggleBtn.textContent = "Sign up";
+        loginBtn.textContent = "Start Adventure 🚀";
+    } else {
+        authToggleText.textContent = "Already have an account?";
+        authToggleBtn.textContent = "Log in";
+        loginBtn.textContent = "Create Account & Start 🚀";
+    }
+}
+
+// initial mode
+setAuthMode("login");
+
+// click event for Sign up / Log in
+if (authToggleBtn) {
+    authToggleBtn.addEventListener("click", () => {
+        if (authMode === "login") {
+            setAuthMode("signup");
+        } else {
+            setAuthMode("login");
+        }
+    });
+}
+
+// ---- LOGIN / SIGN UP FORM HANDLER ----
+loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!email || !password) {
+        showMessage("Email and password are required.", "error");
+        return;
+    }
+
+    const users = loadUsers();
+
+    if (authMode === "signup") {
+        // SIGN UP: "Don't have an account"
+        const existing = users.find(u => u.email === email);
+        if (existing) {
+            showMessage("Account already exists. Click 'Log in' instead.", "error");
+            return;
+        }
+        users.push({ email, password });
+        saveUsers(users);
+        saveIdentity(email);
+        showMessage("Account created. Logging you in…", "success");
+        startGameFor(email);
+    } else {
+        // LOG IN: "Already have an account"
+        const user = users.find(u => u.email === email && u.password === password);
+        if (!user) {
+            showMessage("Account not found or password incorrect.", "error");
+            return;
+        }
+        saveIdentity(email);
+        startGameFor(email);
+    }
+});
+
 // RENDER HELPERS
 function renderProgress() {
     progressList.innerHTML = "";
@@ -137,13 +233,17 @@ function renderInventory() {
 }
 
 function highlightActiveLocationButton() {
-    const buttons = locationButtonsContainer.querySelectorAll("button");
+    const buttons = locationButtonsContainer.querySelectorAll("button[data-location]");
     buttons.forEach(btn => {
-        if (btn.dataset.location === gameState.currentLocationKey) {
-            btn.classList.add("active-location");
-        } else {
-            btn.classList.remove("active-location");
-        }
+        const key = btn.dataset.location;
+        const isActive = key === gameState.currentLocationKey;
+        const isUnlocked = gameState.unlockedLocations.has(key);
+
+        btn.classList.toggle("active-location", isActive);
+        btn.classList.toggle("locked-location", !isUnlocked);
+
+        // lock the button if not unlocked yet
+        btn.disabled = !isUnlocked;
     });
 }
 
@@ -197,6 +297,7 @@ function checkAnswer() {
     if (!loc) return;
 
     const userAnswerRaw = answerInput.value.trim();
+
     if (!userAnswerRaw) {
         showMessage("Please enter an answer first! 🙈", "error");
         answerInput.classList.add("shake");
@@ -232,12 +333,30 @@ function handleCorrectAnswer(locKey) {
     if (!gameState.solvedLocations.has(locKey)) {
         gameState.solvedLocations.add(locKey);
         gameState.inventory.push(loc.reward);
+
+        // unlock next location in the chain
+        const idx = locationOrder.indexOf(locKey);
+        const nextKey = locationOrder[idx + 1];
+        if (nextKey) {
+            gameState.unlockedLocations.add(nextKey);
+            showMessage(
+                `Correct! 🎉 You earned: ${loc.reward}. New area unlocked: ${locations[nextKey].name}!`,
+                "success"
+            );
+        } else {
+            showMessage(
+                `Correct! 🎉 You earned: ${loc.reward}. You've completed all locations!`,
+                "success"
+            );
+        }
+    } else {
+        // already solved, just give feedback
+        showMessage(`Nice! ${loc.name} is already solved. Explore another area.`, "success");
     }
 
     renderProgress();
     renderInventory();
-    playSound(successSound);
-    showMessage(`Correct! 🎉 You earned: ${loc.reward}`, "success");
+    highlightActiveLocationButton();
 
     if (gameState.solvedLocations.size === Object.keys(locations).length) {
         hintText.textContent =
@@ -269,15 +388,40 @@ function showHint() {
 }
 
 // LOGIN / LOGOUT
-loginForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
+// LOGIN FORM
+const loginEmail = document.getElementById("login-email");
+const loginPassword = document.getElementById("login-password");
 
-    if (!email || !password) {
-        showMessage("Email and password are required to start your adventure. 🕵️", "error");
+// SIGNUP FORM
+const signupForm = document.getElementById("signup-form");
+const signupEmail = document.getElementById("signup-email");
+const signupPassword = document.getElementById("signup-password");
+
+// SIMPLE USER DATABASE
+function loadUsers() {
+    return JSON.parse(localStorage.getItem("islandUsers")) || [];
+}
+
+function saveUsers(users) {
+    localStorage.setItem("islandUsers", JSON.stringify(users));
+}
+
+// SIGN UP LOGIC
+signupForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = signupEmail.value.trim();
+    const password = signupPassword.value.trim();
+
+    const users = loadUsers();
+
+    if (users.find(u => u.email === email)) {
+        alert("Account already exists!");
         return;
     }
+
+    users.push({ email, password });
+    saveUsers(users);
 
     saveIdentity(email);
     startGameFor(email);
@@ -311,8 +455,16 @@ locationButtonsContainer.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-location]");
     if (!button) return;
 
-    playSound(clickSound);
     const locationKey = button.dataset.location;
+
+    // if locked, don't let them enter
+    if (!gameState.unlockedLocations.has(locationKey)) {
+        showMessage("This area is locked. Solve your current riddle first to unlock it. 🔒", "error");
+        playSound(failSound);
+        return;
+    }
+
+    playSound(clickSound);
     loadLocation(locationKey);
 });
 
@@ -350,3 +502,5 @@ document.addEventListener("DOMContentLoaded", () => {
         loginScreen.classList.add("active-screen");
     }
 });
+
+

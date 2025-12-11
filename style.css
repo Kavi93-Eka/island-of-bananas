@@ -1,16 +1,19 @@
 :root {
-    --bg-main: #04141b;
-    --bg-card: #082633;
-    --accent: #fdd835;
-    --accent-2: #ff9800;
-    --text-main: #f5f5f5;
-    --text-muted: #a5b5c3;
-    --danger: #ff5252;
-    --success: #4caf50;
-    --border-radius: 16px;
-    --transition-fast: 0.2s ease;
-    --transition-slow: 0.4s ease;
-    --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.35);
+    --bg-main: #FFF7ED;
+    --bg-card: linear-gradient(180deg,#EAFBF6,#F7F9FF);
+    --accent: #FFD43B;
+    --accent-2: #FF7A59;
+    --accent-3: #5CE1E6;
+    --text-main: #091627;
+    --text-muted: #5B6B74;
+    --danger: #FF5C7C;
+    --success: #26D07A;
+    --glass: rgba(255,255,255,0.7);
+    --border-radius: 18px;
+    --transition-fast: 0.18s ease;
+    --transition-slow: 0.45s ease;
+    --shadow-soft: 0 8px 28px rgba(16,24,32,0.12);
+    --card-shadow: 0 10px 30px rgba(16,24,32,0.12);
 }
 
 * {
@@ -20,13 +23,10 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-body {
-    background: radial-gradient(circle at top, #09435c 0%, var(--bg-main) 60%);
-    color: var(--text-main);
-    min-height: 100vh;
-    display: flex;
-    align-items: stretch;
-    justify-content: center;
+body{
+  background: linear-gradient(180deg,#FFF7ED 0%, #F0FFF8 50%, #E8F7FF 100%);
+  color: var(--text-main);
+  font-family: "Baloo 2", "Inter", system-ui, -apple-system, sans-serif;
 }
 
 .screen {
@@ -42,6 +42,118 @@ body {
 
 .hidden {
     display: none;
+}
+
+/* ===== Phase 2: Playful cards, buttons & header (appended overrides) ===== */
+
+/* Card / Panel look */
+.card, .panel {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+/* Header style */
+.game-header {
+  display:flex; justify-content:space-between; align-items:center; gap:12px;
+}
+.game-header h2 { font-size:1.6rem; margin:0 12px 6px 0; color:var(--text-main); font-weight:800;}
+.game-header p { color:var(--text-muted); margin:0; font-size:0.95rem;}
+
+/* Big rounded buttons (gamey) */
+.controls button, button {
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  color: #111;
+  border-radius: 14px;
+  padding: 12px 18px;
+  box-shadow: 0 6px 18px rgba(255,130,55,0.15);
+  font-weight: 700;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.controls button:hover, button:hover { transform: translateY(-3px); }
+
+/* Secondary controls */
+.controls button#sound-toggle {
+  background: linear-gradient(180deg,#fff,#f8f6d6);
+  color:var(--text-main);
+  box-shadow: 0 6px 14px rgba(90,150,140,0.06);
+}
+
+/* Puzzle panel: softer interior for visibility */
+.puzzle-panel {
+  background: linear-gradient(180deg,#FFFBF2, #FFF9F6);
+  border-radius: 18px;
+}
+
+/* Input / answer field - big and friendly */
+.answer-row input {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(8,12,20,0.06);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+  color:var(--text-main);
+}
+
+/* Submit button - bright */
+.answer-row button {
+  min-width:120px;
+  background: linear-gradient(180deg,var(--accent-3), #09c0c8);
+  color:#061018;
+  font-weight:800;
+}
+
+/* Map panel card style (big preview tiles) */
+.map-panel .visual-map {
+  max-width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  display:flex; align-items:center; justify-content:center;
+  padding: 12px;
+}
+.island-map-img { border-radius: 14px; width:100%; height:220px; object-fit:cover; filter: saturate(1.05); }
+
+/* Map points style (more playful) */
+.map-point {
+  width:56px; height:56px; padding:0; font-size:26px;
+  display:inline-flex; align-items:center; justify-content:center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  transition: transform 0.18s, box-shadow 0.18s;
+  background: linear-gradient(180deg,#ffd23b,#ffb347);
+}
+.map-point:hover { transform: translateY(-6px) scale(1.05); box-shadow:0 14px 32px rgba(0,0,0,0.18); }
+
+/* Locked icon style */
+.map-point.locked-location { filter: grayscale(0.6); opacity:0.6; transform:none; cursor:not-allowed; }
+
+/* Panels grid spacing */
+.layout { gap:20px; }
+
+/* Progress / inventory panel - modern card */
+.progress-panel {
+  background: linear-gradient(180deg,#fff,#FFFBF5);
+  border-radius: 14px;
+}
+
+/* Inventory badges */
+#inventory-list li {
+  display:inline-block; margin:6px 6px 0 0; padding:8px 12px;
+  background: linear-gradient(180deg,#FFF7D2,#FFF0B0);
+  border-radius: 12px; color:var(--text-main); font-weight:700;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+/* Message stylings */
+.message.success { color:var(--success); font-weight:700; }
+.message.error { color:var(--danger); font-weight:700; }
+
+/* Small responsive tweak */
+@media (max-width:768px) {
+  .island-map-img { height:160px; }
+  .map-point { width:48px; height:48px; font-size:22px; }
 }
 
 /* LOGIN CARD */
@@ -99,6 +211,8 @@ button {
     font-weight: 600;
     transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    min-height: 44px;
+    border-radius: 12px;
 }
 
 button:hover {
@@ -251,6 +365,166 @@ button:active {
 
 #inventory-list li::before {
     content: "🍌 ";
+}
+
+.final-puzzle {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px dashed rgba(255, 255, 255, 0.35);
+    font-size: 0.9rem;
+}
+
+.auth-note {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: #cfdbe6;
+    text-align: center;
+}
+
+.link-button {
+    border: none;
+    background: none;
+    color: #ffcc33;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 4px;
+    text-decoration: underline;
+}
+
+.screen {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.hidden {
+    display: none;
+}
+
+.auth-note {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.link-button {
+    border: none;
+    background: none;
+    color: #ffcc33;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-left: 4px;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.visual-map {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin: 12px auto 0;
+    height: 220px;
+}
+
+.island-map-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    display: block;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* Common style for map buttons */
+.map-point {
+    position: absolute;
+    background: #ffd22a;
+    border: none;
+    border-radius: 50%;
+    font-size: 22px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.map-point:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 10px gold;
+}
+
+/* Individual positions */
+.map-point.beach   { top: 60%; left: 12%; }
+.map-point.jungle  { top: 25%; left: 18%; }
+.map-point.volcano { top: 25%; right: 18%; }
+.map-point.village { top: 65%; right: 12%; }
+
+.map-point::after {
+    content: attr(data-location);
+    position: absolute;
+    top: -32px;
+    left: -10px;
+    background: black;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    display: none;
+}
+
+/* Locked look (for areas not unlocked yet) */
+.map-point.locked-location {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: grayscale(0.6);
+}
+
+.map-point:hover::after {
+    display: block;
+}
+
+/* ✅ MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+
+    .game-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 10px;
+    }
+
+    .panel {
+        width: 100%;
+    }
+
+    .visual-map {
+        max-width: 100%;
+    }
+
+    .map-point {
+        font-size: 20px;
+        padding: 10px;
+    }
+
+    .top-buttons {
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .top-buttons button {
+        width: 100%;
+        max-width: 95%;
+    }
+
+    #puzzle-image {
+        max-height: 200px;
+        object-fit: contain;
+    }
+
+    input, button {
+        font-size: 16px;
+    }
 }
 
 /* ANIMATIONS */

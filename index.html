@@ -1,34 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Treasure Hunt: Island of Bananas 🍌</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#FFF1D6">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasure Hunt: Island of Bananass 🍌</title>
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
 <!-- ================= LOGIN SCREEN ================= -->
+<!-- LOGIN SCREEN -->
 <section id="login-screen" class="screen active-screen">
     <div class="card fade-in">
         <h1>Treasure Hunt: Island of Bananas 🍌</h1>
         <p class="tagline">Log in to begin your tropical adventure!</p>
 
-        <form id="login-form">
-            <label for="email">Email 🌐</label>
-            <input type="email" id="email" required placeholder="explorer@example.com">
+<form id="login-form">
+    <label for="email">Email 🌐</label>
+    <input type="email" id="email" required placeholder="explorer@example.com">
 
-            <label for="password">Password 🔑</label>
-            <input type="password" id="password" required placeholder="Enter a secret word">
+    <label for="password">Password 🔑</label>
+    <input type="password" id="password" required placeholder="Enter a secret word">
 
-            <button type="submit" id="login-btn">Start Adventure 🚀</button>
-        </form>
+    <button type="submit" id="login-btn">Start Adventure 🚀</button>
+
+    <p class="auth-note">
+        <span id="auth-toggle-text">Don’t have an account?</span>
+        <button type="button" id="auth-toggle" class="link-button">
+            Sign up
+        </button>
+    </p>
+</form>
 
         <p class="small-note">
             This login is for <strong>virtual identity</strong> only – it’s stored in your browser (localStorage),
             not on a server.
         </p>
     </div>
+</section>
+
+
+<!-- SIGN UP SCREEN -->
+<section id="signup-screen" class="screen hidden">
+
+    <h2>Sign Up</h2>
+
+    <form id="signup-form">
+
+        <label>Email</label>
+        <input type="email" id="signup-email" required>
+
+        <label>Password</label>
+        <input type="password" id="signup-password" required>
+
+        <button type="submit">Create Account</button>
+
+        <p class="auth-note">
+            Already have an account?
+            <button type="button" id="go-login" class="link-button">Log in</button>
+        </p>
+
+    </form>
 </section>
 
 <!-- ================= GAME SCREEN ================= -->
@@ -51,13 +85,17 @@
         <section class="panel map-panel">
             <h3>Island Map 🗺️</h3>
             <p>Select a location to explore:</p>
-            <div id="location-buttons" class="location-buttons">
-                <button data-location="beach">🏖️ Sunny Beach</button>
-                <button data-location="jungle">🌴 Mystic Jungle</button>
-                <button data-location="volcano">🌋 Banana Volcano</button>
-                <button data-location="village">🏝️ Banana Village</button>
-            </div>
 
+<div id="location-buttons" class="visual-map">
+
+    <img src="assets/images/island-map.png" class="island-map-img">
+
+    <button class="map-point beach" data-location="beach">🏖️</button>
+    <button class="map-point jungle" data-location="jungle">🌴</button>
+    <button class="map-point volcano" data-location="volcano">🌋</button>
+    <button class="map-point village" data-location="village">🏘️</button>
+
+</div>
             <div id="location-info">
                 <h3 id="location-title"></h3>
                 <p id="location-description"></p>
@@ -69,7 +107,7 @@
             <h3>Puzzle Zone 🧩</h3>
 
             <div class="puzzle-image-wrap">
-                <img id="puzzle-image" alt="Puzzle image" />
+                <img id="puzzle-image" src="assets/images/beach.jpg" alt="Puzzle image" />
             </div>
 
             <p id="puzzle-question"></p>
@@ -81,6 +119,7 @@
 
             <p id="hint-text" class="hint-text"></p>
             <p id="message" class="message"></p>
+
         </section>
 
         <!-- PROGRESS / INVENTORY -->
@@ -92,6 +131,13 @@
 
             <h4>Items collected:</h4>
             <ul id="inventory-list"></ul>
+
+            <div id="final-puzzle" class="final-puzzle hidden">
+                 <h4>Final Treasure Puzzle 🧠</h4>
+                 <p id="final-puzzle-text">
+                     Solve all island locations to unlock the final coordinates…
+                </p>
+            </div>
         </section>
     </main>
 </section>
